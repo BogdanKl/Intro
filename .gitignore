@@ -1,4 +1,4 @@
-*.user
+*.pro.user
 *.class
 *.obj
 *.o
