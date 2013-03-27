@@ -4,7 +4,6 @@
 #include <QMainWindow>
 #include <QLineEdit>
 #include <qextserialport.h>
-#include "qextserialenumerator.h"
 #include <QByteArray>
 #include <QtCore/QDebug>
 
@@ -21,7 +20,6 @@ public:
 
     QextSerialPort * port;
     QByteArray arr;
-    QList<QextPortInfo> ports;
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 

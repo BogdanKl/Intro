@@ -2,7 +2,6 @@
 #include "ui_mainwindow.h"
 #include <QString>
 #include <qextserialport.h>
-#include "qextserialenumerator.h"
 #include <QByteArray>
 #include <QtCore/QDebug>
 #include <QObject>
@@ -18,9 +17,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     m_value = 4;
-    ui->lineEdit->setText("0");
-    ports = QextSerialEnumerator::getPorts();
-    port = new QextSerialPort(ports.takeAt(1).portName);
+    port = new QextSerialPort("COM1");
     port->setBaudRate(BAUD19200);
     port->setFlowControl(FLOW_OFF);
     port->setParity(PAR_NONE);
@@ -55,12 +52,14 @@ void MainWindow::make()
 {
     while (port->waitForBytesWritten(2000)){
     connect(port,SIGNAL(bytesWritten(size)),this,SLOT(onDataAvailable()));}
-
     m_value ++;
-    qDebug() << "1";
+    qDebug() << m_value;
     if (m_value < 100)
     {
       emit contin();
+    }
+    {
+        m_value = 0;
     }
 }
 
