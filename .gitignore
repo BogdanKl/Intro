@@ -1,0 +1,7 @@
+*.class
+*.obj
+*.o
+*.exe
+bin/*
+debug/*
+release/*
