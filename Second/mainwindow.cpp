@@ -9,25 +9,15 @@
 
 int m_value = 0;
 int size = 8;
-int result;
-
+char *result;
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    m_value = 4;
-    port = new QextSerialPort("COM4");
-    //port->setBaudRate(BAUD19200);
-    //port->setFlowControl(FLOW_OFF);
-    //port->setParity(PAR_NONE);
-    //port->setDataBits(DATA_8);
-    //port->setStopBits(STOP_2);
-    port->open(QIODevice::ReadWrite);
+    port = new QextSerialPort("COM3");
+    port ->open(QIODevice::ReadWrite);
     qDebug() << port->isOpen();
-    qDebug() << port->readAll();
-    QObject::connect(this,SIGNAL(contin()),this,SLOT(make()));
-    arr.clear();
 }
 
 MainWindow::~MainWindow()
@@ -35,55 +25,61 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::on_lineEdit_textChanged(const QString &arg1)
+void MainWindow::iter()
 {
-    ui->lineEdit->setText(arg1);
-}
-
-void MainWindow::on_Quit_clicked()
-{
-    this->close();
-}
-
-void MainWindow::on_End_clicked()
-{
-    ui->lineEdit->setText(QString::number(result));
-    m_value = 0;
-}
-void MainWindow::make()
-{
-    while (port->waitForBytesWritten(2000)){
-      connect(port,SIGNAL(bytesWritten(qint64)),this,SLOT(onDataAvailable()));
-    }
-    m_value ++;
-    qDebug() << m_value;
-    if (m_value < 100)
+    int i = port -> write("aba");
+    if (i <= 0)
     {
-      emit contin();
+        qDebug("Error");
     }
-    {
-        m_value = 0;
+    else{
+    qDebug("iter, i= %d",i);
+    qDebug() << "Bytes written";
+    connect(port,SIGNAL(bytesWritten(qint64)),this,SLOT(doing()));
     }
+
 }
 
 void MainWindow::on_Begin_clicked()
 {
-    emit contin();
+    char * str = "100" ;
+    int num;
+    int i = port->write(str,qstrlen(str));
+    qDebug("I= %d",i);
+    str ="";
+    i = port-> read(str,num);
+    qDebug() << i;
+    qDebug("read: str= %s",str);
+    qDebug("iter");
+    MainWindow::iter();
+
 }
-void MainWindow::onDataAvailable() {
+
+void MainWindow::on_End_clicked()
+{
+    ui->lineEdit->setText(result);
+}
+void MainWindow::doing()
+{
     char buff[1024];
         int numBytes;
         numBytes = port->bytesAvailable();
-        qDebug() << numBytes;
+        qDebug("numBytes= %d", numBytes);
         if(numBytes > 0)
         {
             if(numBytes > 1024)
                  numBytes = 1024;
             int i = port->read(buff, numBytes);
             buff[i] = '\0';
-            QString msg = buff;
-            //qDebug(msg);
+            result = buff;
             qDebug("bytes available: %d", numBytes);
             qDebug("received: %d", i);
       }
- }
+       connect(port,SIGNAL(readyRead()),this,SLOT(iter()));
+        connect(port,SIGNAL(readChannelFinished()),this,SLOT(iter()));
+}
+
+void MainWindow::on_Quit_clicked()
+{
+    this->close();
+}

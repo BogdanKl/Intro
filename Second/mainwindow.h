@@ -1,38 +1,35 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
+
 #include <qextserialport.h>
 
-#include <QMainWindow>
-#include <QLineEdit>
-#include <QtCore/QByteArray>
-#include <QtCore/QDebug>
+#include <QtGui/QMainWindow>0
+#include <QTimer>
+#include <QDebug>
+#include <QByteArray>
 
 namespace Ui {
 class MainWindow;
 }
-extern int m_value;
-extern int size;
-extern int result;
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
 public:
-
     QextSerialPort *port;
-    QByteArray arr;
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
-
-signals:
+    QTimer *t;
+ signals:
     void contin();
-    
+
 private slots:
-    void on_lineEdit_textChanged(const QString &arg1);
-    void on_Quit_clicked();
-    void on_End_clicked();
     void on_Begin_clicked();
-    void onDataAvailable();
-    void make();
+    void iter();
+    void on_End_clicked();
+    void doing();
+
+    void on_Quit_clicked();
 
 private:
     Ui::MainWindow *ui;
