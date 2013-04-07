@@ -17,6 +17,7 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 public:
     QextSerialPort *port;
+    QextSerialPort *portr;
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
     QTimer *t;
