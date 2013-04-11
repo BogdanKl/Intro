@@ -7,3 +7,8 @@
 bin/*
 debug/*
 release/*
+Makefile*
+moc_*.cpp
+qrc_*.cpp
+debug/
+release/
