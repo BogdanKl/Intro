@@ -1,14 +1,15 @@
-#include "mainwindow.h"
-#include "ui_mainwindow.h"
-#include <qextserialport.h>
-
 #include <QtCore/QString>
 #include <QtCore/QByteArray>
 #include <QtCore/QDebug>
 #include <QtCore/QObject>
 
+#include "mainwindow.h"
+#include "ui_mainwindow.h"
+#include <qextserialport.h>
+
 int m_value = 0;
 char *result;
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -38,22 +39,17 @@ void MainWindow::iter()
     {
         qDebug("Error");
     }
-    if (m_value <4 )
+    if (m_value < 4)
     {
         m_value++;
         //MainWindow::doing();
         connect(port,SIGNAL(bytesWritten(qint64)),this,SLOT(doing()));
     }
-    else
-    {
-
-    }
 }
 
 void MainWindow::on_Begin_clicked()
 {
-    char * str = "1000" ;
-    int num;
+    char *str = "1000";
     int i = port->write(str,qstrlen(str));
     qDebug("I= %d",i);
     m_value++;
@@ -74,7 +70,7 @@ void MainWindow::doing()
     int numBytes;
     numBytes = portr->bytesAvailable();
     qDebug("numBytes= %d", numBytes);
-    if(numBytes > 0)
+    if (numBytes > 0)
     {
         if(numBytes > 1024)
             numBytes = 1024;
@@ -86,7 +82,7 @@ void MainWindow::doing()
         qDebug("buff = %s", buff);
     }
     MainWindow::iter();
-    connect(portr,SIGNAL(readChannelFinished()),this,SLOT(iter()));
+    connect(port,SIGNAL(readChannelFinished()),this,SLOT(iter()));
 }
 
 void MainWindow::on_Quit_clicked()

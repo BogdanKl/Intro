@@ -1,12 +1,12 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include <qextserialport.h>
-
 #include <QtGui/QMainWindow>
-#include <QTimer>
-#include <QDebug>
-#include <QByteArray>
+#include <QtCore/QTimer>
+#include <QtCore/QDebug>
+#include <QtCore/QByteArray>
+
+#include <qextserialport.h>
 
 namespace Ui {
 class MainWindow;
@@ -20,7 +20,6 @@ public:
     QextSerialPort *portr;
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
-    QTimer *t;
  signals:
     void contin();
 
