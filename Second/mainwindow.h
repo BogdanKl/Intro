@@ -3,7 +3,7 @@
 
 #include <qextserialport.h>
 
-#include <QtGui/QMainWindow>0
+#include <QtGui/QMainWindow>
 #include <QTimer>
 #include <QDebug>
 #include <QByteArray>

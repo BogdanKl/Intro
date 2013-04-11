@@ -15,5 +15,5 @@ SOURCES += main.cpp\
 HEADERS  += mainwindow.h
 
 FORMS    += mainwindow.ui
-CONFIG += extserialport
-include(qextserialport/src/qextserialport.pri)
+#CONFIG += extserialport
+include(3rdparty/qextserialport/src/qextserialport.pri)

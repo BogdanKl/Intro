@@ -41,7 +41,7 @@ void MainWindow::iter()
     if (m_value <4 )
     {
         m_value++;
-        MainWindow::doing();
+        //MainWindow::doing();
         connect(port,SIGNAL(bytesWritten(qint64)),this,SLOT(doing()));
     }
     else
@@ -57,8 +57,8 @@ void MainWindow::on_Begin_clicked()
     int i = port->write(str,qstrlen(str));
     qDebug("I= %d",i);
     m_value++;
-    MainWindow::iter();
-    //connect(port,SIGNAL(bytesWritten(qint64)),this,SLOT(doing()));
+    //MainWindow::iter();
+    connect(port,SIGNAL(bytesWritten(qint64)),this,SLOT(doing()));
 
 }
 
