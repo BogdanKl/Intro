@@ -1,3 +1,4 @@
+
 #include <QtCore/QString>
 #include <QtCore/QByteArray>
 #include <QtCore/QDebug>
@@ -7,24 +8,22 @@
 #include "ui_mainwindow.h"
 #include <qextserialport.h>
 
-int m_value = 0;
-char *result;
-
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    port = new QextSerialPort("COM3",QextSerialPort::Polling);
-    qDebug() << port->baudRate();
-    qDebug() << port->dataBits();
-    m_value = 0;
-    port -> open(QIODevice::WriteOnly);
-    portr = new QextSerialPort("COM5",QextSerialPort::Polling);
-    portr-> open(QIODevice::ReadOnly);
-    qDebug() << portr->isOpen();
-    qDebug() << port->isOpen();
-    qDebug() << port->openMode();
+    mPortW = new QextSerialPort("COM3",QextSerialPort::Polling);
+    mPortW -> open(QIODevice::WriteOnly);
+    mPortR = new QextSerialPort("COM5",QextSerialPort::Polling);
+    mPortR-> open(QIODevice::ReadOnly);
+    mTimerR = new QTimer(this);
+    mTimerW = new QTimer(this);
+    mNumIteration = 0;
+    mTimerR->setInterval(1000);
+    mTimerW->setInterval(1000);
+    connect(mTimerR, SIGNAL(timeout()), this, SLOT(writting()));
+    connect(mTimerW, SIGNAL(timeout()), this, SLOT(reading()));
 }
 
 MainWindow::~MainWindow()
@@ -32,60 +31,60 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::iter()
+void MainWindow::writting()
 {
-    int i = port -> write("aba");
-    if (i <= 0)
+    if (mNumIteration < 100)
     {
-        qDebug("Error");
-    }
-    if (m_value < 4)
-    {
-        m_value++;
-        //MainWindow::doing();
-        connect(port,SIGNAL(bytesWritten(qint64)),this,SLOT(doing()));
+        mNumIteration++;
+        int i = mPortW -> write(QByteArray::number(mNumIteration));
+        if (i <= 0)
+        {
+            qDebug("Error");
+        }
+        else
+        {
+            mTimerW->start();
+        }
     }
 }
 
 void MainWindow::on_Begin_clicked()
 {
-    char *str = "1000";
-    int i = port->write(str,qstrlen(str));
-    qDebug("I= %d",i);
-    m_value++;
-    //MainWindow::iter();
-    connect(port,SIGNAL(bytesWritten(qint64)),this,SLOT(doing()));
-
+    qDebug("Begin");
+    mTimerW->start();
 }
 
 void MainWindow::on_End_clicked()
 {
-    ui->lineEdit->setText(result);
-    m_value = 0;
+    ui->lineEdit->setText(mResult);
+    mTimerR->stop();
+    mTimerW->stop();
+    //mTimerR->disconnect(mTimerR, SIGNAL(timeout()), this, SLOT(writting()));
+    //mTimerW->disconnect(mTimerW, SIGNAL(timeout()), this, SLOT(reading()));
+    mNumIteration = 0;
 }
-void MainWindow::doing()
+
+void MainWindow::reading()
 {
-    portr->waitForBytesWritten(-1);
     char buff[1024];
     int numBytes;
-    numBytes = portr->bytesAvailable();
+    numBytes = mPortR->bytesAvailable();
     qDebug("numBytes= %d", numBytes);
     if (numBytes > 0)
     {
         if(numBytes > 1024)
             numBytes = 1024;
-        int i = portr->read(buff, numBytes);
+        int i = mPortR->read(buff, numBytes);
         buff[i] = '\0';
-        result = buff;
         qDebug("bytes available: %d", numBytes);
         qDebug("received: %d", i);
         qDebug("buff = %s", buff);
     }
-    MainWindow::iter();
-    connect(port,SIGNAL(readChannelFinished()),this,SLOT(iter()));
+    mTimerR->start();
 }
 
 void MainWindow::on_Quit_clicked()
 {
     this->close();
 }
+

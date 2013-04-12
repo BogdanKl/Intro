@@ -16,19 +16,23 @@ class MainWindow : public QMainWindow
 {
     Q_OBJECT
 public:
-    QextSerialPort *port;
-    QextSerialPort *portr;
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
  signals:
     void contin();
+private:
+    QextSerialPort *mPortW;
+    QextSerialPort *mPortR;
+    QTimer *mTimerR;
+    QTimer *mTimerW;
+    int mNumIteration;
+    char mResult[1024];
 
 private slots:
     void on_Begin_clicked();
-    void iter();
+    void writting();
     void on_End_clicked();
-    void doing();
-
+    void reading();
     void on_Quit_clicked();
 
 private:
